@@ -110,6 +110,8 @@ export function RecentStats(props: StatsViewState) {
 export function TotalStats(props: StatsViewState) {
     let history = props.history;
     let filtered = StatFuncs.filterType(history, props.view);
+    let defaultHistory = filtered.filter(s => s.individual !== undefined);
+    let nonDefaultHistory = filtered.filter(s => s.individual === undefined);
     return (<table className="TotalStats">
         <caption>All Sessions</caption>
         <thead>
@@ -120,15 +122,25 @@ export function TotalStats(props: StatsViewState) {
                 <th>Questions</th>
             </tr>
         </thead>
-        <tbody> {
-            filtered.map((t, i) =>
-                <tr key={i}>
-                    <td>{i + 1})</td>
-                    <td>{Util.formatDate(t.date)}</td>
-                    <td>{Util.formatSeconds(t.totalTime)}</td>
-                    <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
-                </tr>)
-        }
+        <tbody>
+            {
+                defaultHistory.map((t, i) =>
+                    <tr key={i}>
+                        <td>{i + 1})</td>
+                        <td>{Util.formatDate(t.date)}</td>
+                        <td>{Util.formatSeconds(t.totalTime)}</td>
+                        <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
+                    </tr>)
+            }
+            {
+                nonDefaultHistory.map((t, i) =>
+                    <tr key={i}>
+                        <td>{i + 1})</td>
+                        <td>{Util.formatDate(t.date)}</td>
+                        <td>{Util.formatSeconds(t.totalTime)}</td>
+                        <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
+                    </tr>)
+            }
         </tbody>
     </table>);
 }
