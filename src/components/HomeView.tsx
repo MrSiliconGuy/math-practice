@@ -1,8 +1,10 @@
 import React from 'react';
-import { SessionType, SessionTypes, SessionTypeNames } from '../model/Math';
+import { SessionType, SessionTypes, SessionTypeNames, MathSessionResults } from '../model/Math';
 import './HomeView.css';
+import { StatFuncs } from '../model/Stats';
 
 type HomeViewProps = {
+    history: MathSessionResults[],
     onStartPractice: (type: SessionType) => void,
     onNavigateSelectSession: () => void,
     onNavigateStats: () => void,
@@ -16,8 +18,15 @@ type HomeViewState = {
 export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
     constructor(props: HomeViewProps) {
         super(props);
+        let history = StatFuncs.getHistorySorted(props.history);
+        let type: SessionType;
+        if (history.length === 0) {
+            type = "add"
+        } else {
+            type = history[history.length - 1].type;
+        }
         this.state = {
-            sessionType: "add"
+            sessionType: type
         }
     }
 
@@ -46,7 +55,7 @@ export class HomeView extends React.Component<HomeViewProps, HomeViewState> {
         let sessionType = this.state.sessionType;
         return (
             <div className="Home">
-                <button className="Home-start" onClick={this.handleStartClick.bind(this)}>Start Practice</button>
+                <button className="Home-start" onClick={this.handleStartClick.bind(this)}>Start<br />Practice</button>
                 <select className="Home-start-type" value={sessionType} onChange={this.handleSelectType.bind(this)}>
                     {
                         SessionTypes.map(t => <option value={t} key={t}>

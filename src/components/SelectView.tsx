@@ -2,6 +2,7 @@ import React from 'react';
 import { MathSessionTemplate, MathSessionOptions, SessionType, SessionTypes, SessionTypeNames } from '../model/Math';
 import { Util } from '../model/Util';
 import './SelectView.css';
+import cross from './cross.svg';
 
 type RangeControlType = "range" | "pool";
 
@@ -93,6 +94,9 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
 
     handleInputRangeAmount(e: React.ChangeEvent, min: boolean) {
         let value = parseInt((e.target as HTMLInputElement).value, 10);
+        if (value < 0) {
+            value = 1;
+        }
         let range = Util.clone(this.state.range);
         if (min) {
             range.min = value;
@@ -175,17 +179,19 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
         if (rangeType === "range") {
             rangeControls = <div className="Select-range-range">
                 <input type="number" pattern="[0-9]*"
+                    min={1}
                     value={Number.isNaN(range.min) ? "" : range.min}
                     onChange={e => this.handleInputRangeAmount(e, true)}
                     onBlur={e => this.handleValidateRangeAmount(e, true)} />
                 <input type="number" pattern="[0-9]*"
+                    min={1}
                     value={Number.isNaN(range.max) ? "" : range.max}
                     onChange={e => this.handleInputRangeAmount(e, false)}
                     onBlur={e => this.handleValidateRangeAmount(e, false)} />
             </div>
         } else if (rangeType === "pool") {
             rangeControls = <div className="Select-range-pool">{
-                Util.range(1, 12).map(i =>
+                Util.range(1, 20).map(i =>
                     <button key={i}
                         className={"Select-range-pool-button " +
                             (pool.includes(i) ? "Select-range-pool-button-selected" : "")}
@@ -204,7 +210,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
                             checked={n === numberQuestions}
                             onChange={() => this.handleSelectNumberQuestions(n)} />,
                         <label
-                            onClick={() => this.handleSelectNumberQuestions(n)}>{n} Questions</label>
+                            onClick={() => this.handleSelectNumberQuestions(n)}>{n} Questions</label>,
+                        <br />
                     ])
                 }
             </div>
@@ -213,7 +220,7 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
                 <input type="checkbox" checked={shuffle}
                     onChange={this.handleToggleShuffle.bind(this)} />
                 <label
-                    onClick={this.handleToggleShuffle.bind(this)}> Shuffle? </label>
+                    onClick={this.handleToggleShuffle.bind(this)}>Shuffle?</label>
             </div>
         }
 
@@ -256,8 +263,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
                         <label onClick={this.handleToggleRandom.bind(this)}>
                             Random?
                         </label>
-                        {orderControls}
                     </div>
+                    {orderControls}
                     <div className="Select-submit">
                         <button onClick={this.handleStartSession.bind(this)}>Start Practice</button>
                         <span className="link" onClick={this.handleSaveTemplate.bind(this)}>Save Settings</span>
@@ -278,6 +285,6 @@ export function SessionTemplate(props: SessionTemplateProps) {
     return (<div className="SessionTemplate">
         <button className="SessionTemplate-start" onClick={props.onStart}>Start</button>
         <span className="SessionTemplate-name">{props.name}</span>
-        <button className="SessionTemplate-remove" onClick={props.onRemove}>×</button>
+        <button className="SessionTemplate-remove" onClick={props.onRemove}>{<img src={cross} alt="X" />}</button>
     </div>);
 }

@@ -1,3 +1,8 @@
 fieldset.Settings-fieldset * {
     margin: 5px;
 }
+
+textarea.Settings-import-export-box {
+    width: max-content;
+    font-size: 20px;
+}

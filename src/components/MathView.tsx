@@ -1,6 +1,7 @@
 import React from 'react';
 import { MathSession, MathFuncs, MathSessionOptions, MathOperatorSymbols, MathSessionResults } from '../model/Math';
 import { Settings } from '../model/Storage';
+import './MathView.css';
 
 type MathViewProps = {
     options: MathSessionOptions,
@@ -50,6 +51,8 @@ export class MathView extends React.Component<MathViewProps, MathViewState> {
                 let totalTime = session.times.reduce((v, t) => v + t, 0);
                 let currentTime = new Date().getTime()
                 let elapsedTime = currentTime - startTime - totalTime;
+                // Cap at 9.9s per question
+                elapsedTime = Math.min(elapsedTime, 9900);
                 session.times.push(elapsedTime);
                 session.progress += 1;
                 if (session.progress === session.total) {
@@ -75,27 +78,28 @@ export class MathView extends React.Component<MathViewProps, MathViewState> {
             <div className="Math">
                 <div className="Math-session">
                     <div className="Math-question">
+                        <span className="Math-oper">{MathOperatorSymbols[curQuestion.oper]}</span>
                         <div className="Math-numbers">
                             <span>{curQuestion.num1}</span>
                             <span>{curQuestion.num2}</span>
                         </div>
-                        <span className="Math-oper">{MathOperatorSymbols[curQuestion.oper]}</span>
                     </div>
                     <div className="Math-answer">
                         <input
+                            placeholder="?"
+                            maxLength={3}
+                            size={3}
                             value={input ?? ""}
                             onChange={this.handleInput.bind(this)}
                             type="number" />
                     </div>
-                    {
-                        settings.showProgressBar ?
-                            <progress
-                                className="Math-progress"
-                                value={session.progress}
-                                max={session.total}
-                            /> : null
-                    }
                 </div>
+                {
+                    settings.showProgressBar ?
+                        <div className="Math-progress">
+                            <div style={{ width: (session.progress / session.total * 100) + "%" }}></div>
+                        </div> : null
+                }
             </div>
         );
     }

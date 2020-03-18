@@ -10,9 +10,9 @@ export const SessionTypes: SessionType[] = ['add', 'sub', 'mul', 'div', 'mix', '
 
 export const MathOperatorSymbols = {
     'add': '+',
-    'sub': '-',
-    'mul': '*',
-    'div': '/'
+    'sub': '−',
+    'mul': '×',
+    'div': '÷'
 }
 
 export const SessionTypeNames = {

@@ -42,13 +42,15 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
                 </select>
                 <span>{SessionTypeNames[view]} Attempts: {StatFuncs.filterType(history, view).length}</span>
                 <span>Total Attempts: {history.length}</span>
-                <RecentStats {...this.state} />
-                <TotalStats {...this.state} />
-                {
-                    MathOperators.includes(view as MathOperator) ? (
-                        <IndividualStats {...this.state} />
-                    ) : null
-                }
+                <div className="StatsView-tables">
+                    <RecentStats {...this.state} />
+                    <TotalStats {...this.state} />
+                    {
+                        MathOperators.includes(view as MathOperator) ? (
+                            <IndividualStats {...this.state} />
+                        ) : null
+                    }
+                </div>
             </div>
         );
     }
@@ -61,7 +63,7 @@ export function RecentStats(props: StatsViewState) {
     let child = (latest === null || latest.individual === undefined) ? null : (
         <tr>
             <td>
-                Fastest Times:
+                <b>Fastest Times:</b>
                 <ul>
                     {
                         StatFuncs.getFastest(latest, 5).map((v, i) =>
@@ -73,7 +75,7 @@ export function RecentStats(props: StatsViewState) {
                 </ul>
             </td>
             <td>
-                Slowest Times:
+                <b>Slowest Times:</b>
                 <ul>
                     {
                         StatFuncs.getSlowest(latest, 5).map((v, i) =>
@@ -89,8 +91,8 @@ export function RecentStats(props: StatsViewState) {
         <caption>Latest Session:</caption>
         <thead>
             <tr>
-                <td>Date</td>
-                <td>Time</td>
+                <th>Date</th>
+                <th>Time</th>
             </tr>
         </thead>
         <tbody>
@@ -112,16 +114,16 @@ export function TotalStats(props: StatsViewState) {
         <caption>All Sessions</caption>
         <thead>
             <tr>
-                <td>&nbsp;</td>
-                <td>Date</td>
-                <td>Total Time</td>
-                <td>Num Questions</td>
+                <th>&nbsp;</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Questions</th>
             </tr>
         </thead>
         <tbody> {
             filtered.map((t, i) =>
                 <tr key={i}>
-                    <td>{i + 1}</td>
+                    <td>{i + 1})</td>
                     <td>{Util.formatDate(t.date)}</td>
                     <td>{Util.formatSeconds(t.totalTime)}</td>
                     <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
@@ -149,12 +151,12 @@ export function IndividualStats(props: StatsViewState) {
 
     let tableData = range.map(i => (
         <tr>
-            <td className="IndividualStats-header">{i}</td>
+            <th className="IndividualStats-header">{i}</th>
             {
                 range.map(j => (() => {
                     let curTime = times[i - DefaultRange.min][j - DefaultRange.min];
                     return <td className="IndividualStats-data" style={{ backgroundColor: getColor(curTime) }}>
-                        {curTime === null ? "N/A" : Util.formatSeconds(curTime)}
+                        {curTime === null ? "N/A" : (curTime / 1000).toFixed(1)}
                     </td>
                 })())
             }
@@ -162,13 +164,13 @@ export function IndividualStats(props: StatsViewState) {
     ));
 
     return (
-        <table>
+        <table className="IndividualStats">
             <caption>Individual Stats (Average of 5)</caption>
             <thead>
                 <tr>
-                    <td className="IndividualStats-header">{MathOperatorSymbols[oper]}</td>
+                    <th>{MathOperatorSymbols[oper]}</th>
                     {
-                        range.map(n => <td>{n}</td>)
+                        range.map(n => <th>{n}</th>)
                     }
                 </tr>
                 {tableData}

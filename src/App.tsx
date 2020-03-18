@@ -121,6 +121,7 @@ export class App extends React.Component<AppProps, AppState> {
             title = "Math Practice";
             showExit = false;
             child = <HomeView
+                history={data.history}
                 onStartPractice={this.handleStartDefaultSession.bind(this)}
                 onNavigateSelectSession={() => this.handleNavigate('select')}
                 onNavigateStats={() => this.handleNavigate('stats')}

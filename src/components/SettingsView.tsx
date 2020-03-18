@@ -1,7 +1,6 @@
 import React from 'react';
 import { Settings, Data, StorageFuncs, DefaultData } from '../model/Storage';
 import './SettingsView.css'
-import { Util } from '../model/Util';
 
 type SettingsViewProps = {
     data: Data,
@@ -77,7 +76,7 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
                         showImport: false,
                         showExport: false
                     });
-                }, 1000);
+                }, 5000);
             });
         } else {
             this.setState({
@@ -96,6 +95,10 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
         if (window.confirm("Are you sure you want to delete all your session data?\n(This cannot be undone)")) {
             this.props.onImportSettings(StorageFuncs.serialize(DefaultData));
         }
+    }
+
+    handleAboutClick() {
+        alert("Math Practice was coded by MrSiliconGuy\nwith the React.js framework");
     }
 
     render() {
@@ -126,21 +129,37 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
                 {
                     showExport ? (
                         <textarea
-                            className="Settings-export-box"
+                            readOnly={true}
+                            cols={25}
+                            rows={4}
+                            className="Settings-import-export-box"
                             onClick={e => (e.target as HTMLTextAreaElement).select()}
                             onBlur={this.handleExportBlur.bind(this)}
                             value={dataSerialized}></textarea>
                     ) : showImport ? (
                         <textarea
+                            cols={25}
+                            rows={4}
                             onClick={e => (e.target as HTMLTextAreaElement).select()}
                             onChange={this.handleImportEdit.bind(this)}
                             onKeyPress={this.handleImportSettingsKeypress.bind(this)}
                             onBlur={this.handleImportSettings.bind(this)}
-                            className="Settings-import-box"
+                            className="Settings-import-export-box"
                             value={this.state.importText}
                         ></textarea>
                     ) : null
                 }
+            </fieldset>
+            <fieldset className="Settings-fieldset">
+                <legend>Other</legend>
+                <span
+                    className="link"
+                    onClick={this.handleAboutClick.bind(this)}>About</span>
+                <a
+                    className="link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://www.github.com/mrsiliconguy/math-practice">GitHub</a>
             </fieldset>
         </div>
     }
