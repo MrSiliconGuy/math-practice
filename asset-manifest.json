@@ -1,22 +1,23 @@
 {
   "files": {
-    "main.css": "/math-practice/static/css/main.5c9732ab.chunk.css",
-    "main.js": "/math-practice/static/js/main.a82a6abc.chunk.js",
-    "main.js.map": "/math-practice/static/js/main.a82a6abc.chunk.js.map",
+    "main.css": "/math-practice/static/css/main.709a970b.chunk.css",
+    "main.js": "/math-practice/static/js/main.b06521c9.chunk.js",
+    "main.js.map": "/math-practice/static/js/main.b06521c9.chunk.js.map",
     "runtime-main.js": "/math-practice/static/js/runtime-main.c50e844a.js",
     "runtime-main.js.map": "/math-practice/static/js/runtime-main.c50e844a.js.map",
-    "static/js/2.17181267.chunk.js": "/math-practice/static/js/2.17181267.chunk.js",
-    "static/js/2.17181267.chunk.js.map": "/math-practice/static/js/2.17181267.chunk.js.map",
+    "static/js/2.60bce8fe.chunk.js": "/math-practice/static/js/2.60bce8fe.chunk.js",
+    "static/js/2.60bce8fe.chunk.js.map": "/math-practice/static/js/2.60bce8fe.chunk.js.map",
     "index.html": "/math-practice/index.html",
-    "precache-manifest.f07c227480f9ab91a816839e3b7d8d56.js": "/math-practice/precache-manifest.f07c227480f9ab91a816839e3b7d8d56.js",
+    "precache-manifest.577a9e83e5442ae5fb450cf4a55aae7e.js": "/math-practice/precache-manifest.577a9e83e5442ae5fb450cf4a55aae7e.js",
     "service-worker.js": "/math-practice/service-worker.js",
-    "static/css/main.5c9732ab.chunk.css.map": "/math-practice/static/css/main.5c9732ab.chunk.css.map",
-    "static/js/2.17181267.chunk.js.LICENSE.txt": "/math-practice/static/js/2.17181267.chunk.js.LICENSE.txt"
+    "static/css/main.709a970b.chunk.css.map": "/math-practice/static/css/main.709a970b.chunk.css.map",
+    "static/js/2.60bce8fe.chunk.js.LICENSE.txt": "/math-practice/static/js/2.60bce8fe.chunk.js.LICENSE.txt",
+    "static/media/cross.svg": "/math-practice/static/media/cross.b5d66db1.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.c50e844a.js",
-    "static/js/2.17181267.chunk.js",
-    "static/css/main.5c9732ab.chunk.css",
-    "static/js/main.a82a6abc.chunk.js"
+    "static/js/2.60bce8fe.chunk.js",
+    "static/css/main.709a970b.chunk.css",
+    "static/js/main.b06521c9.chunk.js"
   ]
 }
