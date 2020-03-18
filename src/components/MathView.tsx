@@ -86,6 +86,7 @@ export class MathView extends React.Component<MathViewProps, MathViewState> {
                     </div>
                     <div className="Math-answer">
                         <input
+                            autoFocus={true}
                             placeholder="?"
                             maxLength={3}
                             size={3}
