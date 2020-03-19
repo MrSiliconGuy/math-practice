@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/math-practice/static/css/main.709a970b.chunk.css",
-    "main.js": "/math-practice/static/js/main.b0bd733e.chunk.js",
-    "main.js.map": "/math-practice/static/js/main.b0bd733e.chunk.js.map",
+    "main.css": "/math-practice/static/css/main.86cf5849.chunk.css",
+    "main.js": "/math-practice/static/js/main.83ac271c.chunk.js",
+    "main.js.map": "/math-practice/static/js/main.83ac271c.chunk.js.map",
     "runtime-main.js": "/math-practice/static/js/runtime-main.c50e844a.js",
     "runtime-main.js.map": "/math-practice/static/js/runtime-main.c50e844a.js.map",
     "static/js/2.60bce8fe.chunk.js": "/math-practice/static/js/2.60bce8fe.chunk.js",
     "static/js/2.60bce8fe.chunk.js.map": "/math-practice/static/js/2.60bce8fe.chunk.js.map",
     "index.html": "/math-practice/index.html",
-    "precache-manifest.a27982037a3c29412eb4b437cfc7085d.js": "/math-practice/precache-manifest.a27982037a3c29412eb4b437cfc7085d.js",
+    "precache-manifest.4b0231bae63deceab14f105183b5a6ae.js": "/math-practice/precache-manifest.4b0231bae63deceab14f105183b5a6ae.js",
     "service-worker.js": "/math-practice/service-worker.js",
-    "static/css/main.709a970b.chunk.css.map": "/math-practice/static/css/main.709a970b.chunk.css.map",
+    "static/css/main.86cf5849.chunk.css.map": "/math-practice/static/css/main.86cf5849.chunk.css.map",
     "static/js/2.60bce8fe.chunk.js.LICENSE.txt": "/math-practice/static/js/2.60bce8fe.chunk.js.LICENSE.txt",
     "static/media/cross.svg": "/math-practice/static/media/cross.b5d66db1.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.c50e844a.js",
     "static/js/2.60bce8fe.chunk.js",
-    "static/css/main.709a970b.chunk.css",
-    "static/js/main.b0bd733e.chunk.js"
+    "static/css/main.86cf5849.chunk.css",
+    "static/js/main.83ac271c.chunk.js"
   ]
 }
