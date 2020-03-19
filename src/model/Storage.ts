@@ -2,7 +2,7 @@ import { MathSessionTemplate, MathSessionResults } from "./Math";
 import lzString from "lz-string";
 import { Util } from "./Util";
 
-const version = "v0.1.0";
+const version = "v1.0.0";
 
 export type Settings = {
     showProgressBar: boolean
