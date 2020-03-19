@@ -92,9 +92,7 @@ export class App extends React.Component<AppProps, AppState> {
     handleRemoveHistory(index: number) {
         let { data } = Util.clone(this.state);
         data.history.splice(index, 1);
-        this.setState({
-            data
-        })
+        this.updateData(data)
     }
 
     // Settings View
