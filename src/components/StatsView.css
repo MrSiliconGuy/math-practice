@@ -64,6 +64,17 @@ table.RecentStats ul {
     margin: 5px 0px;
 }
 
+table.TotalStats button {
+    width: 40px;
+    height: 40px;
+
+    border-width: 1px;
+    background-color: whitesmoke;
+
+    padding: 0px;
+    margin-right: 5px;
+}
+
 table.IndividualStats td {
     font-family: 'Courier New', Courier, monospace;
 }

@@ -23,7 +23,8 @@ type SelectViewProps = {
 type SelectViewState = {
     rangeType: RangeControlType,
     range: { min: number, max: number },
-    pool: number[],
+    pool1: number[],
+    pool2: number[],
     type: SessionType,
     shuffle: boolean,
     random: boolean,
@@ -36,7 +37,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
         this.state = {
             rangeType: "range",
             range: { min: 1, max: 12 },
-            pool: Util.range(1, 12),
+            pool1: Util.range(1, 12),
+            pool2: Util.range(1, 12),
             type: "add",
             shuffle: true,
             random: false,
@@ -49,7 +51,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
             type: this.state.type,
             useRange: this.state.rangeType === "range",
             range: this.state.range,
-            pool: this.state.pool,
+            pool1: this.state.pool1,
+            pool2: this.state.pool2,
             order: this.state.random ? "random" :
                 this.state.shuffle ? "all-shuffle" : "all",
             numQuestions: this.state.numberQuestions,
@@ -67,7 +70,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
             type: this.state.type,
             useRange: this.state.rangeType === "range",
             range: this.state.range,
-            pool: this.state.pool,
+            pool1: this.state.pool1,
+            pool2: this.state.pool2,
             order: this.state.random ? "random" :
                 this.state.shuffle ? "all-shuffle" : "all",
             numQuestions: this.state.numberQuestions,
@@ -131,15 +135,24 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
         });
     }
 
-    handleToggleRangePool(num: number) {
-        let pool = this.state.pool
+    handleToggleRangePool(isPool1: boolean, num: number) {
+        let pool = isPool1 ? this.state.pool1 : this.state.pool2;
         let index = pool.indexOf(num);
         if (index === -1) {
             pool.push(num);
         } else {
             pool.splice(index, 1);
         }
-        this.setState({ pool });
+
+        if (isPool1) {
+            this.setState({
+                pool1: pool
+            });
+        } else {
+            this.setState({
+                pool2: pool
+            });
+        }
     }
 
     handleSelectType(e: React.ChangeEvent) {
@@ -169,7 +182,8 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
         let templates = this.props.sessionTemplates;
         let rangeType = this.state.rangeType;
         let range = this.state.range;
-        let pool = this.state.pool;
+        let pool1 = this.state.pool1;
+        let pool2 = this.state.pool2;
         let type = this.state.type;
         let random = this.state.random;
         let shuffle = this.state.shuffle;
@@ -190,15 +204,16 @@ export class SelectView extends React.Component<SelectViewProps, SelectViewState
                     onBlur={e => this.handleValidateRangeAmount(e, false)} />
             </div>
         } else if (rangeType === "pool") {
-            rangeControls = <div className="Select-range-pool">{
-                Util.range(1, 20).map(i =>
-                    <button key={i}
-                        className={"Select-range-pool-button " +
-                            (pool.includes(i) ? "Select-range-pool-button-selected" : "")}
-                        onClick={() => this.handleToggleRangePool(i)}>
-                        {i}
-                    </button>)
-            }</div>
+            rangeControls = [
+                <RangePool
+                    key={1}
+                    pool={pool1}
+                    onToggleNum={n => this.handleToggleRangePool(true, n)} />,
+                <RangePool
+                    key={2}
+                    pool={pool2}
+                    onToggleNum={n => this.handleToggleRangePool(false, n)} />,
+            ]
         }
 
         let orderControls: React.ReactNode;
@@ -282,9 +297,36 @@ type SessionTemplateProps = {
 }
 
 export function SessionTemplate(props: SessionTemplateProps) {
+    function remove() {
+        if (!window.confirm("Are you sure you want to remove this template?")) {
+            return;
+        }
+        props.onRemove();
+    }
+
     return (<div className="SessionTemplate">
         <button className="SessionTemplate-start" onClick={props.onStart}>Start</button>
         <span className="SessionTemplate-name">{props.name}</span>
-        <button className="SessionTemplate-remove" onClick={props.onRemove}>{<img src={cross} alt="X" />}</button>
+        <button className="SessionTemplate-remove" onClick={remove}>
+            <img src={cross} alt="X" />
+        </button>
     </div>);
+}
+
+type RangePoolProps = {
+    onToggleNum: (num: number) => void
+    pool: number[]
+}
+
+export function RangePool(props: RangePoolProps) {
+    let { pool, onToggleNum } = props;
+    return (<div className="RangePool">{
+        Util.range(1, 20).map(i =>
+            <button key={i}
+                className={"RangePool-button " +
+                    (pool.includes(i) ? "RangePool-selected" : "")}
+                onClick={() => onToggleNum(i)}>
+                {i}
+            </button>)
+    }</div>);
 }

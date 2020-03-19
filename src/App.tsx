@@ -88,6 +88,15 @@ export class App extends React.Component<AppProps, AppState> {
         this.updateData(data);
     }
 
+    // Stats View
+    handleRemoveHistory(index: number) {
+        let { data } = Util.clone(this.state);
+        data.history.splice(index, 1);
+        this.setState({
+            data
+        })
+    }
+
     // Settings View
     handleUpdateSettings(settings: Settings) {
         let data = this.state.data;
@@ -149,6 +158,7 @@ export class App extends React.Component<AppProps, AppState> {
             title = "User Statistics";
             showExit = true;
             child = <StatsView
+                onRemoveHistory={this.handleRemoveHistory.bind(this)}
                 history={data.history} />
         } else if (this.state.view === 'settings') {
             title = "Settings";

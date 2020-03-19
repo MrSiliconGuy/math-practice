@@ -130,17 +130,17 @@ div.Select-range-range>input {
     max-width: 20vh;
 }
 
-div.Select-range-pool {
+div.RangePool {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 5px;
 }
 
-button.Select-range-pool-button {
+button.RangePool-button {
     background-color: lightgrey;
 }
 
-button.Select-range-pool-button-selected {
+button.RangePool-selected {
     background-color: #2fff52;
 }
 

@@ -2,14 +2,15 @@ import React from 'react';
 import { SessionType, MathSessionResults, SessionTypes, SessionTypeNames, MathOperatorSymbols, DefaultRange, MathOperator, MathOperators } from '../model/Math';
 import { StatFuncs } from '../model/Stats';
 import { Util } from '../model/Util';
+import cross from './cross.svg';
 import './StatsView.css';
 
 type StatsViewProps = {
-    history: MathSessionResults[]
+    history: MathSessionResults[],
+    onRemoveHistory: (index: number) => void
 }
 
 type StatsViewState = {
-    history: MathSessionResults[],
     view: SessionType
 }
 
@@ -17,7 +18,6 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
     constructor(props: StatsViewProps) {
         super(props);
         this.state = {
-            history: StatFuncs.getHistorySorted(props.history),
             view: 'add'
         };
     }
@@ -29,9 +29,13 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
         });
     }
 
+    handleRemoveHistory(index: number) {
+        this.props.onRemoveHistory(index);
+    }
+
     render() {
         let view = this.state.view;
-        let history = this.state.history;
+        let history = this.props.history;
         return (
             <div className="StatsView">
                 <select value={view} onChange={this.handleChangeView.bind(this)}>
@@ -43,11 +47,11 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
                 <span>{SessionTypeNames[view]} Attempts: {StatFuncs.filterType(history, view).length}</span>
                 <span>Total Attempts: {history.length}</span>
                 <div className="StatsView-tables">
-                    <RecentStats {...this.state} />
-                    <TotalStats {...this.state} />
+                    <RecentStats {...this.state} {...this.props} />
+                    <TotalStats {...this.state} {...this.props} onRemoveHistory={this.handleRemoveHistory.bind(this)} />
                     {
                         MathOperators.includes(view as MathOperator) ? (
-                            <IndividualStats {...this.state} />
+                            <IndividualStats {...this.state} {...this.props} />
                         ) : null
                     }
                 </div>
@@ -56,7 +60,12 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
     }
 }
 
-export function RecentStats(props: StatsViewState) {
+type RecentStatsProps = {
+    view: SessionType,
+    history: MathSessionResults[],
+}
+
+export function RecentStats(props: RecentStatsProps) {
     let history = props.history;
     let latest = StatFuncs.getLatestDefault(history, props.view);
 
@@ -107,11 +116,27 @@ export function RecentStats(props: StatsViewState) {
     </table>);
 }
 
-export function TotalStats(props: StatsViewState) {
+
+type TotalStatsProps = {
+    view: SessionType,
+    history: MathSessionResults[],
+    onRemoveHistory: (index: number) => void
+}
+
+
+export function TotalStats(props: TotalStatsProps) {
     let history = props.history;
     let filtered = StatFuncs.filterType(history, props.view);
     let defaultHistory = filtered.filter(s => s.individual !== undefined);
     let nonDefaultHistory = filtered.filter(s => s.individual === undefined);
+
+    function handleRemove(date: number) {
+        if (!window.confirm("Are you sure you want to remove this session?")) {
+            return;
+        }
+        props.onRemoveHistory(history.findIndex(h => h.date === date));
+    }
+
     return (<table className="TotalStats">
         <caption>All Sessions</caption>
         <thead>
@@ -120,6 +145,7 @@ export function TotalStats(props: StatsViewState) {
                 <th>Date</th>
                 <th>Time</th>
                 <th>Questions</th>
+                <th>&nbsp;</th>
             </tr>
         </thead>
         <tbody>
@@ -130,6 +156,11 @@ export function TotalStats(props: StatsViewState) {
                         <td>{Util.formatDate(t.date)}</td>
                         <td>{Util.formatSeconds(t.totalTime)}</td>
                         <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
+                        <td>
+                            <button onClick={() => handleRemove(t.date)}>
+                                <img src={cross} alt="X" />
+                            </button>
+                        </td>
                     </tr>)
             }
             {
@@ -139,13 +170,23 @@ export function TotalStats(props: StatsViewState) {
                         <td>{Util.formatDate(t.date)}</td>
                         <td>{Util.formatSeconds(t.totalTime)}</td>
                         <td>{t.individual !== undefined ? "default" : t.numQuestions}</td>
+                        <td>
+                            <button onClick={() => handleRemove(t.date)}>
+                                <img src={cross} alt="X" />
+                            </button>
+                        </td>
                     </tr>)
             }
         </tbody>
     </table>);
 }
 
-export function IndividualStats(props: StatsViewState) {
+type IndividualStatsState = {
+    view: SessionType,
+    history: MathSessionResults[],
+}
+
+export function IndividualStats(props: IndividualStatsState) {
     let history = props.history;
     let oper = props.view as MathOperator;
     let range = Util.range(DefaultRange.min, DefaultRange.max);

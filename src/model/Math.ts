@@ -47,7 +47,8 @@ export type MathSessionOptions = {
     type: SessionType,
     // Whether to use range or pool
     useRange: boolean,
-    pool?: number[],
+    pool1?: number[],
+    pool2?: number[],
     range?: { min: number, max: number },
 
     // Run all questions, all but shuffled, or a random amount (uses numQuestions)
@@ -103,7 +104,7 @@ export const MathFuncs = {
         }
         throw Error();
     },
-    generateQuestionsRandom(type: SessionType, pool: number[], numQuestions: number): MathQuestion[] {
+    generateQuestionsRandom(type: SessionType, pool1: number[], pool2: number[], numQuestions: number): MathQuestion[] {
         let num1: number;
         let num2: number;
         let oper: MathOperator;
@@ -111,44 +112,44 @@ export const MathFuncs = {
         for (let i = 0; i < numQuestions; i++) {
             if (type === "mix") {
                 oper = Util.randChoice(MathOperators);
-                num1 = Util.randChoice(pool);
-                num2 = Util.randChoice(pool);
+                num1 = Util.randChoice(pool1);
+                num2 = Util.randChoice(pool2);
             } else if (type === "sqr") {
                 oper = 'mul';
-                num1 = Util.randChoice(pool);
+                num1 = Util.randChoice(pool1);
                 num2 = num1;
             } else {
                 oper = type;
-                num1 = Util.randChoice(pool);
-                num2 = Util.randChoice(pool);
+                num1 = Util.randChoice(pool1);
+                num2 = Util.randChoice(pool2);
             }
             let question = MathFuncs.generateQuestion(num1, num2, oper);
             questions.push(question);
         }
         return questions;
     },
-    generateQuestionsOrdered(type: SessionType, pool: number[]): MathQuestion[] {
+    generateQuestionsOrdered(type: SessionType, pool1: number[], pool2: number[]): MathQuestion[] {
         let num1: number;
         let num2: number;
         let oper: MathOperator;
         let questions: MathQuestion[] = [];
-        for (let i = 0; i < pool.length; i++) {
-            for (let j = 0; j < pool.length; j++) {
+        for (let i = 0; i < pool1.length; i++) {
+            for (let j = 0; j < pool2.length; j++) {
                 if (type === "mix") {
                     oper = Util.randChoice(MathOperators);
-                    num1 = pool[i];
-                    num2 = pool[j];
+                    num1 = pool1[i];
+                    num2 = pool2[j];
                 } else if (type === "sqr") {
                     oper = "mul";
-                    num1 = pool[i];
-                    num2 = pool[j];
+                    num1 = pool1[i];
+                    num2 = pool2[j];
                     if (num1 !== num2) {
                         continue;
                     }
                 } else {
                     oper = type;
-                    num1 = pool[i];
-                    num2 = pool[j];
+                    num1 = pool1[i];
+                    num2 = pool2[j];
                 }
                 let question = MathFuncs.generateQuestion(num1, num2, oper);
                 questions.push(question);
@@ -165,20 +166,23 @@ export const MathFuncs = {
         let total: number;
         let isDefault = options.isDefault;
 
-        let pool: number[];
+        let pool1: number[];
+        let pool2: number[]
         if (options.useRange) {
-            pool = Util.range(options.range!.min, options.range!.max);
+            pool1 = Util.range(options.range!.min, options.range!.max)
+            pool2 = Util.range(options.range!.min, options.range!.max);
         } else {
-            pool = Util.clone(options.pool!);
+            pool1 = Util.clone(options.pool1!);
+            pool2 = Util.clone(options.pool2 ?? options.pool1!);
         }
 
         // Generate Questions
         if (options.order === "random") {
-            questions = MathFuncs.generateQuestionsRandom(type, pool, options.numQuestions!);
+            questions = MathFuncs.generateQuestionsRandom(type, pool1, pool2, options.numQuestions!);
         } else if (options.order === "all") {
-            questions = MathFuncs.generateQuestionsOrdered(type, pool);
+            questions = MathFuncs.generateQuestionsOrdered(type, pool1, pool2);
         } else if (options.order === "all-shuffle") {
-            questions = MathFuncs.generateQuestionsOrdered(type, pool);
+            questions = MathFuncs.generateQuestionsOrdered(type, pool1, pool2);
             questions = Util.shuffle(questions);
         }
         total = questions.length;
