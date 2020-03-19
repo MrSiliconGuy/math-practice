@@ -126,7 +126,8 @@ type TotalStatsProps = {
 
 export function TotalStats(props: TotalStatsProps) {
     let history = props.history;
-    let filtered = StatFuncs.filterType(history, props.view);
+    let sorted = StatFuncs.getHistorySorted(history);
+    let filtered = StatFuncs.filterType(sorted, props.view);
     let defaultHistory = filtered.filter(s => s.individual !== undefined);
     let nonDefaultHistory = filtered.filter(s => s.individual === undefined);
 
@@ -191,13 +192,24 @@ export function IndividualStats(props: IndividualStatsState) {
     let oper = props.view as MathOperator;
     let range = Util.range(DefaultRange.min, DefaultRange.max);
     let times = range.map(i => range.map(j => StatFuncs.getIndividualAverage(history, oper, i, j, 5)));
-    let timesSorted = times.reduce((arr, times) => arr.concat(times), []).sort((a, b) => b! - a!);
+    let timesSorted: number[] = times
+        .reduce((arr, times) => arr.concat(times), [])
+        .filter(t => t !== null)
+        .sort((a, b) => b! - a!) as number[];
+    let minTime = Math.min(...timesSorted);
+    let maxTime = Math.max(...timesSorted);
     let getColor = (time: number | null) => {
         if (time === null) {
             return "#777777";
         }
-        let index = timesSorted.indexOf(time);
-        let ratio = index / timesSorted.length;
+        // Ratio based on relative scale
+        // let index = timesSorted.indexOf(time);
+        // let ratio = index / timesSorted.length;
+        // ----- Ratio based on relative scale 2 -----
+        // let ratio = (time - minTime) / (maxTime - minTime);
+        // ----- Ratio based on absolute scale -----
+        //     with 4 as max time
+        let ratio = Math.max(1, time / 4.0);
         let hue = Math.round(ratio * 160);
         return `hsl(${hue}, 100%, 50%)`;
     }
