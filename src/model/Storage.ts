@@ -1,8 +1,8 @@
 import { MathSessionTemplate, MathSessionResults } from "./Math";
-import lzString from "lz-string";
+import lzString from 'lz-string';
 import { Util } from "./Util";
 
-const version = "v1.0.0";
+const version = "v2.0.0";
 
 export type Settings = {
     showProgressBar: boolean
@@ -40,12 +40,17 @@ export const StorageFuncs = {
     },
     serialize(data: Data): string {
         let text = JSON.stringify(data);
-        let compress = lzString.compressToUTF16(text);
+        let compress = lzString.compressToBase64(text);
         return compress;
     },
     deserialize(text: string): Data {
-        let uncompress = lzString.decompressFromUTF16(text);
-        let data = JSON.parse(uncompress);
+        let data: any
+        try {
+            let uncompress = lzString.decompressFromBase64(text);
+            data = JSON.parse(uncompress);
+        } catch {
+            throw Error("Could not parse data");
+        }
         if (this.verifyData(data)) {
             return data;
         } else {
@@ -57,7 +62,11 @@ export const StorageFuncs = {
         if (text === null) {
             return Util.clone(DefaultData);
         } else {
-            return StorageFuncs.deserialize(text);
+            try {
+                return StorageFuncs.deserialize(text);
+            } catch {
+                return Util.clone(DefaultData);
+            }
         }
     },
     async save(data: Data) {

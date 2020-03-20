@@ -17,8 +17,9 @@ type StatsViewState = {
 export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
     constructor(props: StatsViewProps) {
         super(props);
+        let latestHistory = StatFuncs.getHistorySorted(props.history)[props.history.length - 1];
         this.state = {
-            view: 'add'
+            view: latestHistory.type
         };
     }
 
@@ -208,8 +209,8 @@ export function IndividualStats(props: IndividualStatsState) {
         // ----- Ratio based on relative scale 2 -----
         // let ratio = (time - minTime) / (maxTime - minTime);
         // ----- Ratio based on absolute scale -----
-        //     with 4 as max time
-        let ratio = Math.max(1, time / 4.0);
+        //     with 5s as max time
+        let ratio = 1 - Math.min(1, time / 4000);
         let hue = Math.round(ratio * 160);
         return `hsl(${hue}, 100%, 50%)`;
     }

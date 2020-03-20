@@ -1,8 +1,11 @@
 import _ from 'lodash';
+import * as randomJS from 'random-js';
+
+const rng = new randomJS.Random();
 
 export const Util = {
     random(): number {
-        return Math.random();
+        return rng.realZeroToOneExclusive();
     },
     randInt(min: number, max?: number): number {
         if (max === undefined) {
