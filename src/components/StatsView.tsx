@@ -19,7 +19,7 @@ export class StatsView extends React.Component<StatsViewProps, StatsViewState> {
         super(props);
         let latestHistory = StatFuncs.getHistorySorted(props.history)[props.history.length - 1];
         this.state = {
-            view: latestHistory.type ?? 'add'
+            view: latestHistory === undefined ? 'add' : latestHistory.type
         };
     }
 
