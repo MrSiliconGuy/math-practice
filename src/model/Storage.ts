@@ -1,6 +1,5 @@
-import msgPack from 'msgpack-lite';
-import pako from 'pako';
-import base114688 from 'base114688';
+import lzString from 'lz-string'
+import ecoji from 'ecoji-js';
 import { MathSessionTemplate, MathSessionResults } from "./Math";
 import { Util } from "./Util";
 
@@ -41,19 +40,19 @@ export const StorageFuncs = {
             (typeof obj.settings === "object");
     },
     serialize(data: Data): string {
-        let pack = msgPack.encode(data);
-        let compress = pako.deflateRaw(pack);
-        let serialize = base114688.encode(compress);
+        let json = JSON.stringify(data);
+        let compress = lzString.compressToBase64(json);
+        let emoji = ecoji.encode(compress);
 
-        return serialize;
+        return emoji;
     },
     deserialize(text: string): Data {
         let data: any
         try {
-            let deserialize = base114688.decode(text);
-            let uncompress = pako.inflateRaw(deserialize);
-            let unpack = msgPack.decode(uncompress);
-            data = unpack;
+            let emoji = ecoji.decode(text);
+            let compress = lzString.decompressFromBase64(emoji)
+            let json = JSON.parse(compress);
+            data = json;
         } catch {
             throw Error("Could not parse data");
         }
