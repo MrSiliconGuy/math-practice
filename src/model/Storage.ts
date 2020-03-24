@@ -42,15 +42,13 @@ export const StorageFuncs = {
     serialize(data: Data): string {
         let json = JSON.stringify(data);
         let compress = lzString.compressToBase64(json);
-        let emoji = ecoji.encode(compress);
 
-        return emoji;
+        return compress;
     },
     deserialize(text: string): Data {
         let data: any
         try {
-            let emoji = ecoji.decode(text);
-            let compress = lzString.decompressFromBase64(emoji)
+            let compress = lzString.decompressFromBase64(text);
             let json = JSON.parse(compress);
             data = json;
         } catch {
