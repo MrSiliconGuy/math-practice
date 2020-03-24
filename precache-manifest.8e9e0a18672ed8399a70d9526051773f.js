@@ -1,23 +1,23 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "44619e8127eb8cb2f62fa8f798116a8e",
+    "revision": "141924f8b5958d56d53b987d079924b4",
     "url": "/math-practice/index.html"
   },
   {
-    "revision": "19e44e81145465b4d127",
+    "revision": "37bf7fb4c2e6c3e48f53",
     "url": "/math-practice/static/css/main.c33c017b.chunk.css"
   },
   {
-    "revision": "1044880ce846d440ca45",
-    "url": "/math-practice/static/js/2.6cd7207a.chunk.js"
+    "revision": "14eeeaf810ba751aeb4a",
+    "url": "/math-practice/static/js/2.1260ce3d.chunk.js"
   },
   {
-    "revision": "5388a8a4d62fa90c9a14b707519eb061",
-    "url": "/math-practice/static/js/2.6cd7207a.chunk.js.LICENSE.txt"
+    "revision": "9f93e8218a561628ca27d66791db7c34",
+    "url": "/math-practice/static/js/2.1260ce3d.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "19e44e81145465b4d127",
-    "url": "/math-practice/static/js/main.66fb91eb.chunk.js"
+    "revision": "37bf7fb4c2e6c3e48f53",
+    "url": "/math-practice/static/js/main.26ffe317.chunk.js"
   },
   {
     "revision": "83de7412da2c86226a1f",
