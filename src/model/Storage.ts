@@ -1,5 +1,7 @@
+import msgPack from 'msgpack-lite';
+import pako from 'pako';
+import base114688 from 'base114688';
 import { MathSessionTemplate, MathSessionResults } from "./Math";
-import lzString from 'lz-string';
 import { Util } from "./Util";
 
 const version = "v2.0.0";
@@ -39,22 +41,26 @@ export const StorageFuncs = {
             (typeof obj.settings === "object");
     },
     serialize(data: Data): string {
-        let text = JSON.stringify(data);
-        let compress = lzString.compressToBase64(text);
-        return compress;
+        let pack = msgPack.encode(data);
+        let compress = pako.deflateRaw(pack);
+        let serialize = base114688.encode(compress);
+
+        return serialize;
     },
     deserialize(text: string): Data {
         let data: any
         try {
-            let uncompress = lzString.decompressFromBase64(text);
-            data = JSON.parse(uncompress);
+            let deserialize = base114688.decode(text);
+            let uncompress = pako.inflateRaw(deserialize);
+            let unpack = msgPack.decode(uncompress);
+            data = unpack;
         } catch {
             throw Error("Could not parse data");
         }
         if (this.verifyData(data)) {
             return data;
         } else {
-            throw Error("Could not parse data");
+            throw Error("Invalid data");
         }
     },
     load(): Data {

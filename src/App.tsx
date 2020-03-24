@@ -9,7 +9,6 @@ import { Util } from './model/Util';
 import { MathView } from './components/MathView';
 import { SettingsView } from './components/SettingsView';
 import { StatsView } from './components/StatsView';
-import { StatFuncs } from './model/Stats';
 
 type AppView = 'home' | 'select' | 'math' | 'stats' | 'settings';
 
