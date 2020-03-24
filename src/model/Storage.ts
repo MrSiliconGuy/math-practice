@@ -1,5 +1,4 @@
 import lzString from 'lz-string'
-import ecoji from 'ecoji-js';
 import { MathSessionTemplate, MathSessionResults } from "./Math";
 import { Util } from "./Util";
 

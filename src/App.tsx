@@ -125,7 +125,7 @@ export class App extends React.Component<AppProps, AppState> {
         let exitPrompt: string | null = null;
 
         if (this.state.view === 'home') {
-            title = "Math Practice";
+            title = "Math Practice!";
             showExit = false;
             child = <HomeView
                 history={data.history}
