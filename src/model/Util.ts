@@ -57,9 +57,9 @@ export const Util = {
         } else if (diff < 60) {
             return Util.plural(minutesAgo, "minute") + " ago";
         } else if (diff < (60 * 24)) {
-            return Util.plural(hoursAgo, "minute") + " ago";
+            return Util.plural(hoursAgo, "hour") + " ago";
         } else if (diff < (60 * 24 * 3)) {
-            return Util.plural(daysAgo, "minute") + " ago";
+            return Util.plural(daysAgo, "day") + " ago";
         } else if (diff < (60 * 24 * 7)) {
             return "Last " + days[date.getDay()] + " (" + Util.plural(daysAgo, "day") + " ago)";
         } else {
