@@ -63,7 +63,10 @@ export const Util = {
         } else if (diff < (60 * 24 * 7)) {
             return "Last " + days[date.getDay()] + " (" + Util.plural(daysAgo, "day") + " ago)";
         } else {
-            return months[date.getMonth()] + " " + date.getDate() + "(" + Util.plural(daysAgo, "days") + " ago)";
+            return months[date.getMonth()] + " " + date.getDate() + "(" + Util.plural(daysAgo, "day") + " ago)";
         }
+    },
+    compare(a: any, b: any): boolean {
+        return _.isEqual(a, b);
     }
 }

@@ -193,12 +193,12 @@ export function IndividualStats(props: IndividualStatsState) {
     let oper = props.view as MathOperator;
     let range = Util.range(DefaultRange.min, DefaultRange.max);
     let times = range.map(i => range.map(j => StatFuncs.getIndividualAverage(history, oper, i, j, 5)));
-    let timesSorted: number[] = times
-        .reduce((arr, times) => arr.concat(times), [])
-        .filter(t => t !== null)
-        .sort((a, b) => b! - a!) as number[];
-    let minTime = Math.min(...timesSorted);
-    let maxTime = Math.max(...timesSorted);
+    // let timesSorted: number[] = times
+    //     .reduce((arr, times) => arr.concat(times), [])
+    //     .filter(t => t !== null)
+    //     .sort((a, b) => b! - a!) as number[];
+    // let minTime = Math.min(...timesSorted);
+    // let maxTime = Math.max(...timesSorted);
     let getColor = (time: number | null) => {
         if (time === null) {
             return "#777777";

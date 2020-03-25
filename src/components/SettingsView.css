@@ -1,4 +1,6 @@
 fieldset.Settings-fieldset * {
+    font-size: 20px;
+    font-size: inherit;
     margin: 5px;
 }
 

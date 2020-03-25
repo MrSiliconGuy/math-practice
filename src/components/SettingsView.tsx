@@ -1,28 +1,30 @@
-import React from 'react';
-import { Settings, Data, StorageFuncs, DefaultData } from '../model/Storage';
+import React, { ChangeEvent } from 'react';
+import { Settings, Data, AuthData } from '../model/Storage';
 import './SettingsView.css'
+import { Util } from '../model/Util';
 
 type SettingsViewProps = {
+    authData: AuthData | null,
     data: Data,
     settings: Settings,
     onUpdateSettings: (settings: Settings) => void,
-    onImportSettings: (text: string) => boolean,
+    onAddAuth: (token: string) => void,
+    onCheckSync: () => Promise<boolean>,
+    onManualSave: () => Promise<boolean>,
+    onManualLoad: () => Promise<boolean>,
+    onUnlink: () => Promise<boolean>,
 }
 
 type SettingsViewState = {
-    showImport: boolean,
-    showExport: boolean,
-    importText: string
+    token: string,
 }
 
 export class SettingsView extends React.Component<SettingsViewProps, SettingsViewState> {
     constructor(props: SettingsViewProps) {
         super(props);
         this.state = {
-            showImport: false,
-            showExport: false,
-            importText: ""
-        }
+            token: "",
+        };
     }
 
     handleToggleShowProgressBar() {
@@ -31,69 +33,59 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
         this.props.onUpdateSettings(settings);
     }
 
-    handleImportExportToggle(isImport: boolean) {
-        let showImport = this.state.showImport;
-        let showExport = this.state.showExport;
-        if (isImport) {
-            showImport = !showImport;
-            showExport = false;
-        } else {
-            showImport = false;
-            showExport = !showExport;
-        }
+    handleInputAuthData(e: ChangeEvent) {
+        let value = (e.target as HTMLInputElement).value;
         this.setState({
-            showImport,
-            showExport
-        })
-    }
-
-    handleExportBlur() {
-        this.setState({
-            showImport: false,
-            showExport: false
-        })
-    }
-
-    handleImportEdit(e: React.SyntheticEvent) {
-        let importText = (e.target as HTMLTextAreaElement).value;
-        this.setState({
-            importText: importText
+            token: value
         });
     }
 
-    handleImportSettings(e: React.SyntheticEvent) {
-        let text = (e.target as HTMLTextAreaElement).value;
-        if (text === "") {
+    handleLinkDataClick() {
+        if (this.state.token === "") {
+            alert("Please enter a token");
+        } else {
+            this.props.onAddAuth(this.state.token);
+        }
+    }
+
+    handleCheckSync() {
+        this.props.onCheckSync().then(res => {
+            if (res === true) {
+                alert("Data is up to date with gist");
+            } else {
+                alert("Data is not synced with gist! Try manually saving");
+            }
+        })
+    }
+
+    handleManualSave() {
+        this.props.onManualSave().then(res => {
+            if (res === true) {
+                alert("Successfully saved to gist");
+            } else {
+                alert("Error saving to gist!");
+            }
+        })
+    }
+
+    handleManualLoad() {
+        this.props.onManualLoad().then(res => {
+            if (res === true) {
+                alert("Successfully loaded from gist");
+            } else {
+                alert("Error loaindg from gist!");
+            }
+        })
+    }
+
+    async handleUnlink() {
+        if (!window.confirm("Are you sure you want to unlink?")) {
             return;
         }
-        let res = this.props.onImportSettings(text);
-        if (res) {
-            this.setState({
-                importText: "Successfully imported data!"
-            }, () => {
-                setTimeout(() => {
-                    this.setState({
-                        showImport: false,
-                        showExport: false
-                    });
-                }, 5000);
-            });
+        if (await this.props.onUnlink()) {
+            alert("Unlinked data from Github");
         } else {
-            this.setState({
-                importText: "Invalid input"
-            });
-        }
-    }
-
-    handleImportSettingsKeypress(e: React.KeyboardEvent) {
-        if (e.keyCode === 13) {
-            this.handleImportSettings(e);
-        }
-    }
-
-    handleClearData() {
-        if (window.confirm("Are you sure you want to delete all your session data?\n(This cannot be undone)")) {
-            this.props.onImportSettings(StorageFuncs.serialize(DefaultData));
+            alert("Unable to unlink for some reason");
         }
     }
 
@@ -103,9 +95,8 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
 
     render() {
         let settings = this.props.settings;
-        let showImport = this.state.showImport;
-        let showExport = this.state.showExport;
-        let dataSerialized = StorageFuncs.serialize(this.props.data);
+        let state = this.state;
+        let authData = this.props.authData;
         return <div className="Settings">
             <fieldset className="Settings-fieldset">
                 <legend>Math Session</legend>
@@ -116,38 +107,40 @@ export class SettingsView extends React.Component<SettingsViewProps, SettingsVie
                 <label onClick={this.handleToggleShowProgressBar.bind(this)}>Show Progress Bar</label>
             </fieldset>
             <fieldset className="Settings-fieldset">
-                <legend>Import/Export</legend>
-                <span
-                    className="link"
-                    onClick={() => this.handleImportExportToggle(true)}>Import</span>
-                <span
-                    className="link"
-                    onClick={() => this.handleImportExportToggle(false)}>Export</span>
-                <span
-                    className="link"
-                    onClick={this.handleClearData.bind(this)}>Clear Data</span><br />
+                <legend>Github Gist Linking</legend>
                 {
-                    showExport ? (
-                        <textarea
-                            readOnly={true}
-                            cols={25}
-                            rows={4}
-                            className="Settings-import-export-box"
-                            onClick={e => (e.target as HTMLTextAreaElement).select()}
-                            onBlur={this.handleExportBlur.bind(this)}
-                            value={dataSerialized}></textarea>
-                    ) : showImport ? (
-                        <textarea
-                            cols={25}
-                            rows={4}
-                            onClick={e => (e.target as HTMLTextAreaElement).select()}
-                            onChange={this.handleImportEdit.bind(this)}
-                            onKeyPress={this.handleImportSettingsKeypress.bind(this)}
-                            onBlur={this.handleImportSettings.bind(this)}
-                            className="Settings-import-export-box"
-                            value={this.state.importText}
-                        ></textarea>
-                    ) : null
+                    authData === null ?
+                        (
+                            <div>
+                                <span>Data not yet linked</span><br />
+                                <input
+                                    type="text"
+                                    placeholder="Github Token"
+                                    value={state.token}
+                                    onChange={(e) => this.handleInputAuthData(e)}
+                                /><br />
+                                <button onClick={this.handleLinkDataClick.bind(this)}>Link Data</button>
+                                <span className="link">help</span>
+                            </div>
+                        ) : (
+                            <div>
+                                <span>Data linked with
+                                    <a
+                                        className="link"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        href={`https://gist.github.com/${authData.username}/${authData.gist}`}>
+                                        {authData.username}
+                                    </a>
+                                    on Github
+                                </span><br />
+                                <span>Last synced: {authData.lastSynced === -1 ? "Never" : Util.formatDate(authData.lastSynced)}</span><br />
+                                <span className="link" onClick={this.handleCheckSync.bind(this)}>Check Sync</span>
+                                <span className="link" onClick={this.handleManualSave.bind(this)}>Save</span>
+                                <span className="link" onClick={this.handleManualLoad.bind(this)}>Load</span>
+                                <span className="link" onClick={this.handleUnlink.bind(this)}>Unlink</span>
+                            </div>
+                        )
                 }
             </fieldset>
             <fieldset className="Settings-fieldset">

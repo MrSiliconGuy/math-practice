@@ -4,13 +4,13 @@ import { HomeView } from './components/HomeView';
 import { SelectView } from './components/SelectView';
 import './App.css';
 import { MathSessionTemplate, MathSessionOptions, SessionType, MathFuncs, SessionTypeNames, MathSessionResults } from './model/Math';
-import { Data, StorageFuncs, Settings } from './model/Storage';
+import { Data, StorageFuncs, Settings, DefaultData, AuthData } from './model/Storage';
 import { Util } from './model/Util';
 import { MathView } from './components/MathView';
 import { SettingsView } from './components/SettingsView';
 import { StatsView } from './components/StatsView';
 
-type AppView = 'home' | 'select' | 'math' | 'stats' | 'settings';
+type AppView = 'home' | 'select' | 'math' | 'stats' | 'settings' | 'loading';
 
 type AppProps = {
 
@@ -19,6 +19,7 @@ type AppProps = {
 type AppState = {
     view: AppView,
     data: Data,
+    authData: AuthData | null,
     sessionOptions: MathSessionOptions | null
 }
 
@@ -26,9 +27,29 @@ export class App extends React.Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
-            view: 'home',
-            data: StorageFuncs.load(),
+            view: 'loading',
+            data: Util.clone(DefaultData),
+            authData: StorageFuncs.loadAuth(),
             sessionOptions: null
+        }
+        if (this.state.authData !== null) {
+            StorageFuncs.load(this.state.authData).then(data => {
+                if (data) {
+                    this.setState({
+                        view: 'home',
+                        data
+                    });
+                } else {
+                    alert("Unable to load from gist");
+                    this.setState({
+                        view: 'home',
+                        data: Util.clone(DefaultData)
+                    });
+                }
+            });
+        } else {
+            // Kinda sketch
+            this.state = Util.extend(this.state, { view: 'home' });
         }
     }
 
@@ -37,7 +58,9 @@ export class App extends React.Component<AppProps, AppState> {
         this.setState({
             data
         });
-        StorageFuncs.save(data);
+        if (this.state.authData) {
+            StorageFuncs.save(this.state.authData, data);
+        }
     }
 
     // General handlers
@@ -102,19 +125,72 @@ export class App extends React.Component<AppProps, AppState> {
         this.updateData(data);
     }
 
-    handleImportData(text: string): boolean {
-        try {
-            let data = StorageFuncs.deserialize(text);
-            this.updateData(data);
-            return true;
-        } catch {
+    async handleAddAuth(token: string): Promise<void> {
+        let authData = await StorageFuncs.saveAuth(token);
+        if (authData === null) {
+            alert("Invalid Github auth token");
+        } else {
+            alert("Successfully linked auth data");
+            this.setState({
+                authData
+            });
+        }
+    }
+
+    async handleCheckSync(): Promise<boolean> {
+        if (!this.state.authData) {
             return false;
         }
+        let data = await StorageFuncs.load(this.state.authData);
+        if (Util.compare(data, this.state.data)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    async handleManualSave(): Promise<boolean> {
+        if (!this.state.authData) {
+            return false;
+        }
+        let res = await StorageFuncs.save(this.state.authData, this.state.data);
+        if (res === false) {
+            return false;
+        } else {
+            this.setState({
+                authData: StorageFuncs.loadAuth()
+            })
+            return true;
+        }
+    }
+
+    async handleManualLoad(): Promise<boolean> {
+        if (!this.state.authData) {
+            return false;
+        }
+        let res = await StorageFuncs.load(this.state.authData);
+        if (res === null) {
+            return false;
+        } else {
+            this.setState({
+                data: res
+            });
+            return true;
+        }
+    }
+
+    async handleUnlink(): Promise<boolean> {
+        StorageFuncs.clearAuth();
+        this.setState({
+            authData: null
+        })
+        return true;
     }
 
     // ~~Blender~~ render
     render() {
         let data = this.state.data;
+        let authData = this.state.authData;
         let sessionOptions = this.state.sessionOptions;
         let settings = this.state.data.settings;
 
@@ -162,11 +238,20 @@ export class App extends React.Component<AppProps, AppState> {
             title = "Settings";
             showExit = true;
             child = <SettingsView
+                authData={authData}
                 data={data}
                 settings={settings}
                 onUpdateSettings={this.handleUpdateSettings.bind(this)}
-                onImportSettings={this.handleImportData.bind(this)}
+                onAddAuth={this.handleAddAuth.bind(this)}
+                onCheckSync={this.handleCheckSync.bind(this)}
+                onManualSave={this.handleManualSave.bind(this)}
+                onManualLoad={this.handleManualLoad.bind(this)}
+                onUnlink={this.handleUnlink.bind(this)}
             />
+        } else if (this.state.view === 'loading') {
+            title = "Loading...";
+            showExit = false;
+            child = <div></div>
         }
 
         return (
