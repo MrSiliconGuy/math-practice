@@ -59,7 +59,12 @@ export class App extends React.Component<AppProps, AppState> {
             data
         });
         if (this.state.authData) {
-            StorageFuncs.save(this.state.authData, data);
+            StorageFuncs.save(this.state.authData, data).then(res => {
+                // Let the user know when they are unable to save
+                if (!res) {
+                    alert("Data was unable to be saved! Your save data may not be backed up properly");
+                }
+            });
         }
     }
 
@@ -130,10 +135,16 @@ export class App extends React.Component<AppProps, AppState> {
         if (authData === null) {
             alert("Invalid Github auth token");
         } else {
-            alert("Successfully linked auth data");
+            let data = await StorageFuncs.load(authData);
+            if (data === null) {
+                alert("Unable to load data from Github");
+                return;
+            }
             this.setState({
-                authData
+                authData,
+                data
             });
+            alert("Successfully linked auth data");
         }
     }
 
