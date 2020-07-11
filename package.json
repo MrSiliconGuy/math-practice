@@ -18,6 +18,7 @@
     "ascii85": "^1.0.2",
     "base114688": "^1.0.0",
     "ecoji-js": "^1.1.2",
+    "express": "^4.17.1",
     "gists": "^2.0.0",
     "lodash": "^4.17.15",
     "lz-string": "^1.4.4",
@@ -29,7 +30,7 @@
     "react-scripts": "3.4.0",
     "typescript": "^3.8.3"
   },
-  "homepage": "https://mrsiliconguy.github.io/math-practice/",
+  "homepage": ".",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
